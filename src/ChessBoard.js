@@ -79,7 +79,6 @@ function ChessBoard(props) {
           props.board.content,
           position,
           color,
-          props.board.content[position.y][position.x].castling
         );
         break;
       default:

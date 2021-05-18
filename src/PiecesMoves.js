@@ -1,68 +1,80 @@
 const PiecesMoves = {};
 
+function findKing(boardContent, color) {
+  let kingPosition = {};
+  boardContent.find((row, y) => {
+    return row.find((square, x) => {
+      if (square.color === color && square.piece === "king")
+        return (kingPosition = { y, x });
+      return false;
+    });
+  });
+  return kingPosition;
+}
+
 function isCheck(boardContent, position, color) {
-  let check = false;
-  let checkMoves;
-  checkMoves = PiecesMoves.knightMoves(boardContent, position, color);
-  if (
-    checkMoves.find(
+  let checkMoves = [];
+
+  checkMoves = checkMoves.concat(
+    PiecesMoves.rawKnightMoves(boardContent, position, color).find(
       (checkMove) =>
         checkMove.type === "attack" &&
         boardContent[checkMove.y][checkMove.x].piece === "knight"
     )
-  )
-    check = true;
+  );
 
-  checkMoves = PiecesMoves.bishopMoves(boardContent, position, color);
-  if (
-    !check &&
-    checkMoves.find(
+  checkMoves = checkMoves.concat(
+    PiecesMoves.rawBishopMoves(boardContent, position, color).find(
       (checkMove) =>
         checkMove.type === "attack" &&
         (boardContent[checkMove.y][checkMove.x].piece === "bishop" ||
           boardContent[checkMove.y][checkMove.x].piece === "queen")
     )
-  )
-    check = true;
+  );
 
-  checkMoves = PiecesMoves.rookMoves(boardContent, position, color);
-  if (
-    !check &&
-    checkMoves.find(
+  checkMoves = checkMoves.concat(
+    PiecesMoves.rawRookMoves(boardContent, position, color).find(
       (checkMove) =>
         checkMove.type === "attack" &&
         (boardContent[checkMove.y][checkMove.x].piece === "rook" ||
           boardContent[checkMove.y][checkMove.x].piece === "queen")
     )
-  )
-    check = true;
+  );
 
-  checkMoves = PiecesMoves.pawnMoves(boardContent, position, color);
-  if (
-    !check &&
-    checkMoves.find(
+  checkMoves = checkMoves.concat(
+    PiecesMoves.rawPawnMoves(boardContent, position, color).find(
       (checkMove) =>
         checkMove.type === "attack" &&
         boardContent[checkMove.y][checkMove.x].piece === "pawn"
     )
-  )
-    check = true;
+  );
 
-  checkMoves = PiecesMoves.kingMoves(boardContent, position, color, false);
-  if (
-    !check &&
-    checkMoves.find(
+  checkMoves = checkMoves.concat(
+    PiecesMoves.rawKingMoves(boardContent, position, color).find(
       (checkMove) =>
         checkMove.type === "attack" &&
         boardContent[checkMove.y][checkMove.x].piece === "king"
     )
-  )
-    check = true;
+  );
 
-  return check;
+  checkMoves = checkMoves.filter((move) => move);
+
+  return checkMoves.length !== 0;
 }
 
-PiecesMoves.pawnMoves = (boardContent, position, color) => {
+function isCheckOnMove(boardContent, position, newPosition, color) {
+  let boardContentCopy = boardContent.map((row) => row.slice());
+
+  boardContentCopy[newPosition.y][newPosition.x] =
+    boardContentCopy[position.y][position.x];
+  boardContentCopy[position.y][position.x] = {};
+
+  let kingPosition = findKing(boardContentCopy, color);
+
+  return isCheck(boardContentCopy, { y: kingPosition.y, x: kingPosition.x }, color);
+}
+
+PiecesMoves.rawPawnMoves = (boardContent, position, color) => {
   let possibleMoves = [];
   if (color === "white") {
     if (!boardContent[position.y + 1][position.x].piece)
@@ -173,7 +185,15 @@ PiecesMoves.pawnMoves = (boardContent, position, color) => {
   return possibleMoves;
 };
 
-PiecesMoves.bishopMoves = (boardContent, position, color) => {
+PiecesMoves.pawnMoves = (boardContent, position, color) => {
+  let possibleMoves = PiecesMoves.rawPawnMoves(boardContent, position, color);
+
+  return possibleMoves.filter(
+    (move) => !isCheckOnMove(boardContent, position, { y: move.y, x: move.x }, color)
+  );
+};
+
+PiecesMoves.rawBishopMoves = (boardContent, position, color) => {
   let possibleMoves = [];
   for (let i = 0; i < 4; i++) {
     let flag;
@@ -280,7 +300,15 @@ PiecesMoves.bishopMoves = (boardContent, position, color) => {
   return possibleMoves;
 };
 
-PiecesMoves.knightMoves = (boardContent, position, color) => {
+PiecesMoves.bishopMoves = (boardContent, position, color) => {
+  let possibleMoves = PiecesMoves.rawBishopMoves(boardContent, position, color);
+
+  return possibleMoves.filter(
+    (move) => !isCheckOnMove(boardContent, position, { y: move.y, x: move.x }, color)
+  );
+};
+
+PiecesMoves.rawKnightMoves = (boardContent, position, color) => {
   let possibleMoves = [];
   let offsets = [
     { y: 2, x: 1 },
@@ -306,7 +334,15 @@ PiecesMoves.knightMoves = (boardContent, position, color) => {
   return possibleMoves.filter((move) => move);
 };
 
-PiecesMoves.rookMoves = (boardContent, position, color) => {
+PiecesMoves.knightMoves = (boardContent, position, color) => {
+  let possibleMoves = PiecesMoves.rawKnightMoves(boardContent, position, color);
+
+  return possibleMoves.filter(
+    (move) => !isCheckOnMove(boardContent, position, { y: move.y, x: move.x }, color)
+  );
+};
+
+PiecesMoves.rawRookMoves = (boardContent, position, color) => {
   let possibleMoves = [];
   for (let i = 0; i < 4; i++) {
     let flag;
@@ -397,13 +433,29 @@ PiecesMoves.rookMoves = (boardContent, position, color) => {
   return possibleMoves;
 };
 
-PiecesMoves.queenMoves = (boardContent, position, color) => {
+PiecesMoves.rookMoves = (boardContent, position, color) => {
+  let possibleMoves = PiecesMoves.rawRookMoves(boardContent, position, color);
+
+  return possibleMoves.filter(
+    (move) => !isCheckOnMove(boardContent, position, { y: move.y, x: move.x }, color)
+  );
+};
+
+PiecesMoves.rawQueenMoves = (boardContent, position, color) => {
   return PiecesMoves.bishopMoves(boardContent, position, color).concat(
     PiecesMoves.rookMoves(boardContent, position, color)
   );
 };
 
-PiecesMoves.kingMoves = (boardContent, position, color, castling) => {
+PiecesMoves.queenMoves = (boardContent, position, color) => {
+  let possibleMoves = PiecesMoves.rawQueenMoves(boardContent, position, color);
+
+  return possibleMoves.filter(
+    (move) => !isCheckOnMove(boardContent, position, { y: move.y, x: move.x }, color)
+  );
+};
+
+PiecesMoves.rawKingMoves = (boardContent, position, color) => {
   let possibleMoves = [];
   let offsets = [
     { y: 1, x: -1 },
@@ -427,11 +479,16 @@ PiecesMoves.kingMoves = (boardContent, position, color, castling) => {
     return null;
   });
 
-  // Castling checks
-  if (
-    castling &&
-    !isCheck(boardContent, position, color)
-  ) {
+  return possibleMoves.filter((move) => move);
+};
+
+PiecesMoves.kingMoves = (boardContent, position, color) => {
+  let possibleMoves = [];
+
+  possibleMoves = PiecesMoves.rawKingMoves(boardContent, position, color);
+
+  if (!isCheck(boardContent, position, color)) {
+    // Castling checks
     if (boardContent[position.y][0].castling) {
       let squaresClear = true;
       for (let x = position.x - 1; x > 0 && squaresClear; x--)
@@ -445,10 +502,7 @@ PiecesMoves.kingMoves = (boardContent, position, color, castling) => {
         possibleMoves.push({
           y: position.y,
           x: position.x - 2,
-          rookX: 0,
-          rookNewX: position.x - 1,
           type: "move",
-          castling: true,
         });
     }
 
@@ -465,15 +519,14 @@ PiecesMoves.kingMoves = (boardContent, position, color, castling) => {
         possibleMoves.push({
           y: position.y,
           x: position.x + 2,
-          rookX: 7,
-          rookNewX: position.x + 1,
           type: "move",
-          castling: true,
         });
     }
   }
 
-  return possibleMoves.filter((move) => move);
+  return possibleMoves.filter(
+    (move) => !isCheckOnMove(boardContent, position, { y: move.y, x: move.x }, color)
+  );
 };
 
 export default PiecesMoves;

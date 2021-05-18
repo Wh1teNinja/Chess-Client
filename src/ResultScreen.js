@@ -1,6 +1,5 @@
 import { useState } from "react";
 
-
 function ResultScreen(props) {
   const [displayStats, setDisplayStats] = useState(false);
 
@@ -15,6 +14,7 @@ function ResultScreen(props) {
   const generateStatsList = () => {
     let timeInMs =
       new Date(props.board.stats.endTime) - new Date(props.board.stats.startTime);
+
     let timeInString =
       ("0" + Math.floor(timeInMs / (3600 * 1000))).slice(-2) +
       ":" +
@@ -63,7 +63,11 @@ function ResultScreen(props) {
     resultScreenContent = (
       <div className='result-screen flex align-center'>
         <div className='winner'>
-          <h1>{props.board.winner === "draw" ? "Draw!" : props.board.winner?.username + " Wins!"}</h1>
+          <h1>
+            {props.board.winner === "draw"
+              ? "Draw!"
+              : props.board.winner?.username + " Wins!"}
+          </h1>
         </div>
         <div className='result-screen-buttons flex'>
           <button onClick={openStats}>Stats Screen</button>
@@ -128,8 +132,8 @@ function ResultScreen(props) {
       <div className='result-screen flex align-center'>
         <div className='winner'>
           <h1>
-            {props.board[props.board.roundsHistory.slice(-1)[0].winner].username}{" "}
-            won round {props.board.currentRound}!
+            {props.board[props.board.roundsHistory.slice(-1)[0].winner].username} won
+            round {props.board.currentRound}!
           </h1>
         </div>
         <div className='result-screen-buttons flex'>
