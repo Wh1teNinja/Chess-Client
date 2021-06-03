@@ -3,7 +3,7 @@
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 viewBox="0 0 320 320" style="enable-background:new 0 0 320 320;" xml:space="preserve">
 <style type="text/css">
-	.st0{fill:#939598;stroke:#939598;stroke-miterlimit:10;}
+	.st0{fill:#BCBEC0;stroke:#BCBEC0;stroke-miterlimit:10;}
 	.st1{fill:#E6E7E8;stroke:#E6E7E8;stroke-miterlimit:10;}
 	.st2{fill:#D1D3D4;stroke:#D1D3D4;stroke-miterlimit:10;}
 	.st3{fill:#58595B;stroke:#58595B;stroke-miterlimit:10;}
@@ -45,6 +45,6 @@
 	C76.9,156.4,85,173,85,173h47.2H187.9z"/>
 <path class="st1" d="M188,169l11.8-2.9c0,0,3.4-10.7-0.2-11.8c-30.8-9.4-41.2-8.7-41.2-8.7s-47.5,0.6-78.4,10
 	c-2.4,0.7,3.1,13.5,3.1,13.5L188,169z"/>
-<path class="st2" d="M188,169l11.8-2.9c0,0,3.4-10.7-0.2-11.8c-30.8-9.4-41.4-9.7-41.4-9.7s-26.8,2.4-26.8,2.4s-12.9,11-18.1,13.1
+<path class="st2" d="M188,169l11.8-2.9c0,0,3.4-10.7-0.2-11.8c-30.8-9.4-41.4-9.7-41.4-9.7l-26.8,2.4c0,0-12.9,11-18.1,13.1
 	c-7.5,3-32.3,3.4-32.3,3.4l2.1,5.6L188,169z"/>
 </svg>
